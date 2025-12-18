@@ -1,29 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Заголовок XML-документа с указанием версии и кодировки -->
+
 <Configuration status="WARN">
+    <!-- Основной элемент конфигурации Log4j2.
+         Атрибут status="WARN" задаёт уровень логирования для самой системы Log4j (например, ошибки в конфигурации). -->
+
     <Appenders>
+        <!-- Блок определения аппендеров (куда будут записываться логи). -->
+
         <RollingFile name="RollingFileAppender"
                      fileName="logs/hippodrome.log"
                      filePattern="logs/hippodrome.%d{yyyy-MM-dd}.log">
+            <!-- RollingFileAppender — аппендер, который пишет логи в файл и создаёт новые файлы по расписанию.
+                 name="RollingFileAppender" — имя аппендера.
+                 fileName — текущий файл логов.
+                 filePattern — шаблон имени для архивных логов (с датой). -->
+
             <PatternLayout>
+                <!-- Определяет формат записи логов. -->
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
+                <!-- %d — дата и время.
+                     [%t] — имя потока.
+                     %-5level — уровень логирования (DEBUG, INFO, WARN, ERROR).
+                     %logger{36} — имя логгера (ограничено 36 символами).
+                     %msg — сообщение.
+                     %n — перевод строки. -->
             </PatternLayout>
 
             <Policies>
+                <!-- Определяет правила ротации логов. -->
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- TimeBasedTriggeringPolicy — ротация по времени.
+                     interval="1" — каждый день.
+                     modulate="true" — выравнивание по началу периода (например, полуночь). -->
             </Policies>
 
             <DefaultRolloverStrategy>
+                <!-- Стратегия удаления старых логов. -->
                 <Delete basePath="logs" maxDepth="1">
+                    <!-- Удаление файлов в папке logs, глубина поиска — 1 уровень. -->
                     <IfFileName glob="hippodrome.*.log"/>
+                    <!-- Условие: имя файла должно соответствовать шаблону hipprodrome.*.log -->
                     <IfLastModified age="7d"/>
+                    <!-- Условие: удалять файлы старше 7 дней. -->
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
     </Appenders>
 
     <Loggers>
+        <!-- Блок определения логгеров. -->
+
         <Root level="debug">
+            <!-- Root-логгер — главный логгер для всего приложения.
+                 level="debug" — минимальный уровень логирования (DEBUG и выше). -->
             <AppenderRef ref="RollingFileAppender"/>
+            <!-- Подключение аппендера RollingFileAppender к Root-логгеру. -->
         </Root>
     </Loggers>
 </Configuration>
+
